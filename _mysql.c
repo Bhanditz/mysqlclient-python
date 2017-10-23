@@ -710,6 +710,7 @@ _mysql_ConnectionObject_Initialize(
 	     to hold the reference. It would be cleaner to just keep
 	     the objects passed in from the function but that would
 	     make the diff less localized. */
+      Py_END_ALLOW_THREADS;
 	  if (user) {
 	    self->current_nonblocking_username = PyString_FromString(user);
 	    user = PyString_AsString(self->current_nonblocking_username);
@@ -730,6 +731,7 @@ _mysql_ConnectionObject_Initialize(
 	    db = PyString_AsString(self->current_nonblocking_dbname);
 	  }
 
+      Py_BEGIN_ALLOW_THREADS;
 	  int res = mysql_real_connect_nonblocking_init(&(self->connection), host, user, passwd, db,
 							port, unix_socket, client_flag);
 	  if (!res) {
@@ -738,7 +740,7 @@ _mysql_ConnectionObject_Initialize(
 #endif
 	}
 
-	Py_END_ALLOW_THREADS ;
+	Py_END_ALLOW_THREADS;
 
 	if (!conn) {
 		_mysql_Exception(self);
@@ -1195,7 +1197,7 @@ _mysql_escape_string(
 }
 
 #ifdef HAVE_MYSQL_NONBLOCKING_CLIENT
-static char _mysql_nonblocking_connect_run__doc__[] = 
+static char _mysql_nonblocking_connect_run__doc__[] =
   "Call repeatedly to continue on the nonblocking connect.  Returns a\n"
   "net_async_status of either NET_ASYNC_COMPLETE or NET_ASYNC_NOT_READY.\n";
 
